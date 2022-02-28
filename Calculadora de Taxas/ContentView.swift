@@ -23,54 +23,57 @@ struct ContentView: View {
     }
     
     var body: some View {
-        
-        VStack(spacing: 1.0, content: {
-            Text("R$ "+String(format: "%.2f", viewModel.self.calculadora.valorTotal).replacingOccurrences(of: ".", with: ","))
-                .font(.title)
-                .multilineTextAlignment(.trailing)
-                .padding(10.0)
-            if showPaymentConditions {
-                if selectedParcelamento == CalculadoraViewModel.Parcelamento.one {
-                    Text("Você vai pagar R$ \(String(format: "%.2f", viewModel.getParcelamento(parcelas: Int(selectedParcelamento.rawValue) ?? 1))) à Vista.")
-                }else{
-                    Text("Você vai pagar \(selectedParcelamento.rawValue) vezes de: R$ "+String(format: "%.2f", viewModel.getParcelamento(parcelas: Int(selectedParcelamento.rawValue) ?? 1)))
+        NavigationView{
+            VStack(spacing: 1.0, content: {
+                Text("R$ "+String(format: "%.2f", viewModel.self.calculadora.valorTotal).replacingOccurrences(of: ".", with: ","))
+                    .font(.title)
+                    .multilineTextAlignment(.trailing)
+                    .padding(10.0)
+                if showPaymentConditions {
+                    if selectedParcelamento == CalculadoraViewModel.Parcelamento.one {
+                        Text("Você vai pagar R$ \(String(format: "%.2f", viewModel.getParcelamento(parcelas: Int(selectedParcelamento.rawValue) ?? 1))) à Vista.")
+                    }else{
+                        Text("Você vai pagar \(selectedParcelamento.rawValue) vezes de: R$ "+String(format: "%.2f", viewModel.getParcelamento(parcelas: Int(selectedParcelamento.rawValue) ?? 1)))
+                    }
                 }
-            }
-            Spacer()
-            
-            Text("Selecione a quantidade de parcelas:")
-            
-            Picker("Parcelamento", selection: $selectedParcelamento) {
-                ForEach(viewModel.parcelamento(), id: \.self) { parcel in
-                    Text(parcel.rawValue)
-                        .tag(parcel)
+                Spacer()
+                
+                Text("Selecione a quantidade de parcelas:")
+                
+                Picker("Parcelamento", selection: $selectedParcelamento) {
+                    ForEach(viewModel.parcelamento(), id: \.self) { parcel in
+                        Text(parcel.rawValue)
+                            .tag(parcel)
+                    }
+                }.onTapGesture {
+                    showPaymentConditions = false
                 }
-            }.onTapGesture {
-                showPaymentConditions = false
-            }
-            HStack(content: {
-                Text("R$")
-                TextField("Digite o valor a ser calculado", value: $cont, format: .number)
-                    .focused($contIsFocused)
+                HStack(content: {
+                    Text("R$")
+                    TextField("Digite o valor a ser calculado", value: $cont, format: .number)
+                        .focused($contIsFocused)
+                        .padding()
+                        .background(Color.gray.opacity(0.3).cornerRadius(10))
+                        .font(.headline)
+                        .keyboardType(/*@START_MENU_TOKEN@*/.decimalPad/*@END_MENU_TOKEN@*/)
+                })
+                Button(action: calcular, label: {
+                    Text("Calcular".uppercased())
+                        .padding()
+                        .background(Color.blue.cornerRadius(10))
+                        .frame(maxWidth: .infinity)
+                        .foregroundColor(.white)
+                        .font(.headline)
+                })
                     .padding()
-                    .background(Color.gray.opacity(0.3).cornerRadius(10))
-                    .font(.headline)
-                    .keyboardType(/*@START_MENU_TOKEN@*/.decimalPad/*@END_MENU_TOKEN@*/)
+                
+                Spacer()
+                
             })
-            Button(action: calcular, label: {
-                Text("Calcular".uppercased())
-                    .padding()
-                    .background(Color.blue.cornerRadius(10))
-                    .frame(maxWidth: .infinity)
-                    .foregroundColor(.white)
-                    .font(.headline)
-            })
-                .padding()
-            
-            Spacer()
-            
-        })
-            .padding(10)
+                .navigationTitle("Calculadora")
+                .padding(10)
+        }
+        .navigationViewStyle(.stack)
     }
 }
 

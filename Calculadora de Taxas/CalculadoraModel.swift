@@ -15,6 +15,7 @@ struct Calculadora {
     
     mutating func calcularTaxa(taxa: Double, valorTotal: Double) {
         self.valorTotal =  valorTotal + (valorTotal * (taxa/100))
+        self.taxa = taxa
     }
     
     init(valorTotal: Double, taxa: Double){
